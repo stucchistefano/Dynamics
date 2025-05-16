@@ -190,4 +190,548 @@ ax.set_ylim(0, max(bars) + std_dev + 0.05)
 ax.set_title("Jump Height per Trial and Average")
 
 plt.tight_layout()
-plt.show()
+st.pyplot(fig)
+
+st.subheader("Height plot interattivo")
+import plotly.graph_objects as go
+
+st.title("Height Plot")
+
+# Estrai i valori
+height_values = focused_df.loc["height_OC", [f"{focus_type}1", f"{focus_type}2", f"{focus_type}3"]]
+average_height = height_values.mean()
+std_dev = height_values.std()
+
+bars = list(height_values) + [average_height]
+labels = ["Trial 1", "Trial 2", "Trial 3", "Average"]
+colors = ['skyblue'] * 3 + ['lightblue']
+alphas = [1] * 3 + [0.5]
+
+# Crea il grafico Plotly
+fig = go.Figure()
+
+# Aggiungi barre
+for i, val in enumerate(bars):
+    fig.add_trace(go.Bar(
+        x=[labels[i]],
+        y=[val],
+        name=labels[i],
+        marker=dict(color=colors[i]),
+        opacity=alphas[i],
+        text=f"{val:.2f}",
+        textposition="outside"
+    ))
+
+# Aggiungi le barre di errore solo ai primi tre
+for i in range(3):
+    fig.add_trace(go.Scatter(
+        x=[labels[i]],
+        y=[bars[i] + std_dev],
+        mode="markers+lines",
+        marker=dict(symbol="line-ns-open", color="black", size=10),
+        showlegend=False
+    ))
+
+# Layout
+fig.update_layout(
+    yaxis_title="Jump Height [m]",
+    title="Jump Height per Trial and Average",
+    xaxis=dict(tickangle=30),
+    bargap=0.4
+)
+
+st.plotly_chart(fig)
+
+
+st.header("Force plot")
+# Extract height_OC values from the first three columns
+height_values = focused_df.loc["GRF_maxforce_OC", [f"{focus_type}1", f"{focus_type}2", f"{focus_type}3"]]
+average_height = height_values.mean()
+std_dev = height_values.std()
+
+# Prepare values for plotting
+bars = list(height_values) + [average_height]
+labels = ["Trial 1", "Trial 2", "Trial 3", "Average"]
+colors = ['skyblue'] * 3 + ['skyblue']
+alphas = [1] * 3 + [0.5]  # Lower opacity for the average bar
+
+# Create the bar plot
+fig, ax = plt.subplots(figsize=(8, 6))
+bar_containers = []
+
+# Plot each bar individually to apply individual alpha
+for i in range(len(bars)):
+    bar = ax.bar(i, bars[i], color=colors[i], alpha=alphas[i], width=0.6)
+    bar_containers.append(bar)
+
+# Add standard deviation whiskers on top of the average bar only
+for i, val in enumerate(bars):
+    ax.text(i, val + 0.06, f"{val:.2f}", ha='center', va='bottom',
+            fontweight='bold', color='skyblue')
+    # Add whiskers for std on the average bar only
+    if i < 3:  # Only first three bars get whiskers
+        ax.vlines(i, val, val + std_dev, colors='black', linewidth=2)
+        ax.hlines(val + std_dev, i - 0.1, i + 0.1, colors='black', linewidth=2)
+
+# Customize axes
+ax.set_ylabel("Max Force [N/BW]")
+ax.set_xticks(range(len(labels)))
+ax.set_xticklabels(labels, rotation=30)
+ax.set_ylim(0, max(bars) + std_dev + 0.5)
+ax.set_title("BW-Normalized Max Force per Trial and Average")
+
+plt.tight_layout()
+st.pyplot(fig)
+
+
+st.subheader("Interactive Force Plot")
+
+# Estrai i valori
+height_values = focused_df.loc["GRF_maxforce_OC", [f"{focus_type}1", f"{focus_type}2", f"{focus_type}3"]]
+average_height = height_values.mean()
+std_dev = height_values.std()
+
+# Prepara dati
+bars = list(height_values) + [average_height]
+labels = ["Trial 1", "Trial 2", "Trial 3", "Average"]
+colors = ['skyblue'] * 3 + ['lightblue']
+alphas = [1] * 3 + [0.5]
+
+# Crea la figura Plotly
+fig = go.Figure()
+
+# Aggiungi barre
+for i, val in enumerate(bars):
+    fig.add_trace(go.Bar(
+        x=[labels[i]],
+        y=[val],
+        name=labels[i],
+        marker=dict(color=colors[i]),
+        opacity=alphas[i],
+        text=f"{val:.2f}",
+        textposition="outside"
+    ))
+
+# Aggiungi whiskers (deviazione standard) per i primi 3
+for i in range(3):
+    fig.add_trace(go.Scatter(
+        x=[labels[i], labels[i]],
+        y=[bars[i], bars[i] + std_dev],
+        mode="lines",
+        line=dict(color="black", width=2),
+        showlegend=False
+    ))
+    # Aggiungi la "lineetta" orizzontale sopra
+    fig.add_trace(go.Scatter(
+        x=[labels[i]],
+        y=[bars[i] + std_dev],
+        mode="markers",
+        marker=dict(symbol="line-ns-open", color="black", size=12),
+        showlegend=False
+    ))
+
+# Layout
+fig.update_layout(
+    yaxis_title="Max Force [N/BW]",
+    title="BW-Normalized Max Force per Trial and Average",
+    xaxis=dict(tickangle=30),
+    bargap=0.4
+)
+
+# Mostra in Streamlit
+st.plotly_chart(fig)
+
+
+
+st.header("RSI plot")
+# Extract height_OC values from the first three columns
+height_values = focused_df.loc["timeRSI_OC", [f"{focus_type}1", f"{focus_type}2", f"{focus_type}3"]]
+average_height = height_values.mean()
+std_dev = height_values.std()
+
+# Prepare values for plotting
+bars = list(height_values) + [average_height]
+labels = ["Trial 1", "Trial 2", "Trial 3", "Average"]
+colors = ['skyblue'] * 3 + ['skyblue']
+alphas = [1] * 3 + [0.5]  # Lower opacity for the average bar
+
+# Create the bar plot
+fig, ax = plt.subplots(figsize=(8, 6))
+bar_containers = []
+
+# Plot each bar individually to apply individual alpha
+for i in range(len(bars)):
+    bar = ax.bar(i, bars[i], color=colors[i], alpha=alphas[i], width=0.6)
+    bar_containers.append(bar)
+
+# Add standard deviation whiskers on top of the average bar only
+for i, val in enumerate(bars):
+    ax.text(i, val + 0.1, f"{val:.2f}", ha='center', va='bottom',
+            fontweight='bold', color='skyblue')
+    # Add whiskers for std on the average bar only
+    if i < 3:  # Only first three bars get whiskers
+        ax.vlines(i, val, val + std_dev, colors='black', linewidth=2)
+        ax.hlines(val + std_dev, i - 0.1, i + 0.1, colors='black', linewidth=2)
+
+# Customize axes
+ax.set_ylabel("RSI [m/s]")
+ax.set_xticks(range(len(labels)))
+ax.set_xticklabels(labels, rotation=30)
+ax.set_ylim(0, max(bars) + std_dev + 0.25)
+ax.set_title("RSI per Trial and Average")
+
+plt.tight_layout()
+st.pyplot(fig)
+
+
+st.subheader("Interaction RSI Plot")
+
+# Estrai i valori
+height_values = focused_df.loc["timeRSI_OC", [f"{focus_type}1", f"{focus_type}2", f"{focus_type}3"]]
+average_height = height_values.mean()
+std_dev = height_values.std()
+
+# Prepara dati
+bars = list(height_values) + [average_height]
+labels = ["Trial 1", "Trial 2", "Trial 3", "Average"]
+colors = ['skyblue'] * 3 + ['lightblue']
+alphas = [1] * 3 + [0.5]
+
+# Crea figura Plotly
+fig = go.Figure()
+
+# Aggiungi barre
+for i, val in enumerate(bars):
+    fig.add_trace(go.Bar(
+        x=[labels[i]],
+        y=[val],
+        name=labels[i],
+        marker=dict(color=colors[i]),
+        opacity=alphas[i],
+        text=f"{val:.2f}",
+        textposition="outside"
+    ))
+
+# Aggiungi whiskers per std solo ai primi 3 trials
+for i in range(3):
+    fig.add_trace(go.Scatter(
+        x=[labels[i], labels[i]],
+        y=[bars[i], bars[i] + std_dev],
+        mode="lines",
+        line=dict(color="black", width=2),
+        showlegend=False
+    ))
+    # Aggiungi tacca orizzontale in cima al whisker
+    fig.add_trace(go.Scatter(
+        x=[labels[i]],
+        y=[bars[i] + std_dev],
+        mode="markers",
+        marker=dict(symbol="line-ns-open", color="black", size=12),
+        showlegend=False
+    ))
+
+# Layout grafico
+fig.update_layout(
+    yaxis_title="RSI [m/s]",
+    title="RSI per Trial and Average",
+    xaxis=dict(tickangle=30),
+    bargap=0.4
+)
+
+# Mostra in Streamlit
+st.plotly_chart(fig)
+
+
+st.header("Power plot")
+# Extract height_OC values from the first three columns
+height_values = focused_df.loc["max_power_OC", [f"{focus_type}1", f"{focus_type}2", f"{focus_type}3"]]
+average_height = height_values.mean()
+std_dev = height_values.std()
+
+# Prepare values for plotting
+bars = list(height_values) + [average_height]
+labels = ["Trial 1", "Trial 2", "Trial 3", "Average"]
+colors = ['skyblue'] * 3 + ['skyblue']
+alphas = [1] * 3 + [0.5]  # Lower opacity for the average bar
+
+# Create the bar plot
+fig, ax = plt.subplots(figsize=(8, 6))
+bar_containers = []
+
+# Plot each bar individually to apply individual alpha
+for i in range(len(bars)):
+    bar = ax.bar(i, bars[i], color=colors[i], alpha=alphas[i], width=0.6)
+    bar_containers.append(bar)
+
+# Add standard deviation whiskers on top of the average bar only
+for i, val in enumerate(bars):
+    ax.text(i, val + 0.1, f"{val:.2f}", ha='center', va='bottom',
+            fontweight='bold', color='skyblue')
+    # Add whiskers for std on the average bar only
+    if i < 3:  # Only first three bars get whiskers
+        ax.vlines(i, val, val + std_dev, colors='black', linewidth=2)
+        ax.hlines(val + std_dev, i - 0.1, i + 0.1, colors='black', linewidth=2)
+
+# Customize axes
+ax.set_ylabel("Max Power [(N*m)/(s*BW)]")
+ax.set_xticks(range(len(labels)))
+ax.set_xticklabels(labels, rotation=30)
+ax.set_ylim(0, max(bars) + std_dev + 0.5)
+ax.set_title("BW-Normalized Max Power per Trial and Average")
+
+plt.tight_layout()
+st.pyplot(fig)
+
+
+st.subheader("Interactive Power plot")
+# Estrai i valori
+height_values = focused_df.loc["max_power_OC", [f"{focus_type}1", f"{focus_type}2", f"{focus_type}3"]]
+average_height = height_values.mean()
+std_dev = height_values.std()
+
+# Prepara i dati
+bars = list(height_values) + [average_height]
+labels = ["Trial 1", "Trial 2", "Trial 3", "Average"]
+colors = ['skyblue'] * 3 + ['lightblue']
+alphas = [1] * 3 + [0.5]
+
+# Crea la figura Plotly
+fig = go.Figure()
+
+# Aggiungi barre
+for i, val in enumerate(bars):
+    fig.add_trace(go.Bar(
+        x=[labels[i]],
+        y=[val],
+        name=labels[i],
+        marker=dict(color=colors[i]),
+        opacity=alphas[i],
+        text=f"{val:.2f}",
+        textposition="outside"
+    ))
+
+# Aggiungi whiskers solo ai primi 3 trials
+for i in range(3):
+    # Linea verticale (whisker)
+    fig.add_trace(go.Scatter(
+        x=[labels[i], labels[i]],
+        y=[bars[i], bars[i] + std_dev],
+        mode="lines",
+        line=dict(color="black", width=2),
+        showlegend=False
+    ))
+    # Tacca orizzontale in cima al whisker
+    fig.add_trace(go.Scatter(
+        x=[labels[i]],
+        y=[bars[i] + std_dev],
+        mode="markers",
+        marker=dict(symbol="line-ns-open", color="black", size=12),
+        showlegend=False
+    ))
+
+# Layout del grafico
+fig.update_layout(
+    yaxis_title="Max Power [(N·m)/(s·BW)]",
+    title="BW-Normalized Max Power per Trial and Average",
+    xaxis=dict(tickangle=30),
+    bargap=0.4
+)
+
+# Visualizza in Streamlit
+st.plotly_chart(fig)
+
+
+st.header("Impulse plot")
+# Extract height_OC values from the first three columns
+height_values = focused_df.loc["I_OC", [f"{focus_type}1", f"{focus_type}2", f"{focus_type}3"]]
+average_height = height_values.mean()
+std_dev = height_values.std()
+
+# Prepare values for plotting
+bars = list(height_values) + [average_height]
+labels = ["Trial 1", "Trial 2", "Trial 3", "Average"]
+colors = ['skyblue'] * 3 + ['skyblue']
+alphas = [1] * 3 + [0.5]  # Lower opacity for the average bar
+
+# Create the bar plot
+fig, ax = plt.subplots(figsize=(8, 6))
+bar_containers = []
+
+# Plot each bar individually to apply individual alpha
+for i in range(len(bars)):
+    bar = ax.bar(i, bars[i], color=colors[i], alpha=alphas[i], width=0.6)
+    bar_containers.append(bar)
+
+# Add standard deviation whiskers on top of the average bar only
+for i, val in enumerate(bars):
+    ax.text(i, val + 7, f"{val:.2f}", ha='center', va='bottom',
+            fontweight='bold', color='skyblue')
+    # Add whiskers for std on the average bar only
+    if i < 3:  # Only first three bars get whiskers
+        ax.vlines(i, val, val + std_dev, colors='black', linewidth=2)
+        ax.hlines(val + std_dev, i - 0.1, i + 0.1, colors='black', linewidth=2)
+
+# Customize axes
+ax.set_ylabel("Impulse [(kg*m)/s]")
+ax.set_xticks(range(len(labels)))
+ax.set_xticklabels(labels, rotation=30)
+ax.set_ylim(0, max(bars) + std_dev + 25)
+ax.set_title("Impulse per Trial and Average")
+
+plt.tight_layout()
+st.pyplot(fig)
+
+
+st.subheader("Interactive Impulse plot")
+# Estrai i valori
+height_values = focused_df.loc["I_OC", [f"{focus_type}1", f"{focus_type}2", f"{focus_type}3"]]
+average_height = height_values.mean()
+std_dev = height_values.std()
+
+# Prepara i dati
+bars = list(height_values) + [average_height]
+labels = ["Trial 1", "Trial 2", "Trial 3", "Average"]
+colors = ['skyblue'] * 3 + ['lightblue']
+alphas = [1] * 3 + [0.5]
+
+# Crea la figura Plotly
+fig = go.Figure()
+
+# Aggiungi barre
+for i, val in enumerate(bars):
+    fig.add_trace(go.Bar(
+        x=[labels[i]],
+        y=[val],
+        name=labels[i],
+        marker=dict(color=colors[i]),
+        opacity=alphas[i],
+        text=f"{val:.2f}",
+        textposition="outside"
+    ))
+
+# Aggiungi whiskers della deviazione standard (solo ai primi 3 trials)
+for i in range(3):
+    fig.add_trace(go.Scatter(
+        x=[labels[i], labels[i]],
+        y=[bars[i], bars[i] + std_dev],
+        mode="lines",
+        line=dict(color="black", width=2),
+        showlegend=False
+    ))
+    fig.add_trace(go.Scatter(
+        x=[labels[i]],
+        y=[bars[i] + std_dev],
+        mode="markers",
+        marker=dict(symbol="line-ns-open", color="black", size=12),
+        showlegend=False
+    ))
+
+# Layout del grafico
+fig.update_layout(
+    yaxis_title="Impulse [(kg·m)/s]",
+    title="Impulse per Trial and Average",
+    xaxis=dict(tickangle=30),
+    bargap=0.4,
+    yaxis=dict(range=[0, max(bars) + std_dev + 25])
+)
+
+# Mostra in Streamlit
+st.plotly_chart(fig)
+
+
+st.header("Flight Time plot")
+# Extract height_OC values from the first three columns
+height_values = focused_df.loc["Flight_time_OC", [f"{focus_type}1", f"{focus_type}2", f"{focus_type}3"]]
+average_height = height_values.mean()
+std_dev = height_values.std()
+
+# Prepare values for plotting
+bars = list(height_values) + [average_height]
+labels = ["Trial 1", "Trial 2", "Trial 3", "Average"]
+colors = ['skyblue'] * 3 + ['skyblue']
+alphas = [1] * 3 + [0.5]  # Lower opacity for the average bar
+
+# Create the bar plot
+fig, ax = plt.subplots(figsize=(8, 6))
+bar_containers = []
+
+# Plot each bar individually to apply individual alpha
+for i in range(len(bars)):
+    bar = ax.bar(i, bars[i], color=colors[i], alpha=alphas[i], width=0.6)
+    bar_containers.append(bar)
+
+# Add standard deviation whiskers on top of the average bar only
+for i, val in enumerate(bars):
+    ax.text(i, val + 0.025, f"{val:.2f}", ha='center', va='bottom',
+            fontweight='bold', color='skyblue')
+    # Add whiskers for std on the average bar only
+    if i < 3:  # Only first three bars get whiskers
+        ax.vlines(i, val, val + std_dev, colors='black', linewidth=2)
+        ax.hlines(val + std_dev, i - 0.1, i + 0.1, colors='black', linewidth=2)
+
+# Customize axes
+ax.set_ylabel("Time [s]")
+ax.set_xticks(range(len(labels)))
+ax.set_xticklabels(labels, rotation=30)
+ax.set_ylim(0, max(bars) + std_dev + 0.05)
+ax.set_title("Flight-Time per Trial and Average")
+
+plt.tight_layout()
+st.pyplot(fig)
+
+
+st.subheader("Interactive Flight Time plot")
+# Estrai i valori
+height_values = focused_df.loc["Flight_time_OC", [f"{focus_type}1", f"{focus_type}2", f"{focus_type}3"]]
+average_height = height_values.mean()
+std_dev = height_values.std()
+
+# Prepara i dati
+bars = list(height_values) + [average_height]
+labels = ["Trial 1", "Trial 2", "Trial 3", "Average"]
+colors = ['skyblue'] * 3 + ['lightblue']
+alphas = [1] * 3 + [0.5]
+
+# Crea la figura Plotly
+fig = go.Figure()
+
+# Aggiungi barre
+for i, val in enumerate(bars):
+    fig.add_trace(go.Bar(
+        x=[labels[i]],
+        y=[val],
+        name=labels[i],
+        marker=dict(color=colors[i]),
+        opacity=alphas[i],
+        text=f"{val:.2f}",
+        textposition="outside"
+    ))
+
+# Aggiungi whiskers della deviazione standard (solo ai primi 3 trials)
+for i in range(3):
+    fig.add_trace(go.Scatter(
+        x=[labels[i], labels[i]],
+        y=[bars[i], bars[i] + std_dev],
+        mode="lines",
+        line=dict(color="black", width=2),
+        showlegend=False
+    ))
+    fig.add_trace(go.Scatter(
+        x=[labels[i]],
+        y=[bars[i] + std_dev],
+        mode="markers",
+        marker=dict(symbol="line-ns-open", color="black", size=12),
+        showlegend=False
+    ))
+
+# Layout del grafico
+fig.update_layout(
+    yaxis_title="Time [s]",
+    title="Flight-Time per Trial and Average",
+    xaxis=dict(tickangle=30),
+    bargap=0.4,
+    yaxis=dict(range=[0, max(bars) + std_dev + 0.05])
+)
+
+# Mostra il grafico in Streamlit
+st.plotly_chart(fig)
