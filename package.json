@@ -1,0 +1,7 @@
+{
+  "name": "scroll-component",
+  "main": "scroll.js",
+  "scripts": {
+    "build": "echo No build needed"
+  }
+}
