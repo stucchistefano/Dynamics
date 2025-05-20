@@ -285,6 +285,8 @@ fig1.update_layout(
 )
 st.plotly_chart(fig1, use_container_width=True)
 
+
+
 # Plot with area/impulse
 st.header("Points Annotations + Impulse Area")
 
@@ -330,7 +332,7 @@ if len(zero_crossings) >= 2:
         # Compute impulse (area under the curve from drift start to take-off)
         impulse_time = time[drift_start_idx:takeoff_idx+1]
         impulse_grf = grf[drift_start_idx:takeoff_idx+1]
-        impulse_area = np.trapz(impulse_grf, impulse_time)
+        impulse_area = np.trapezoid(impulse_grf, impulse_time)
 
 # --- Slider for visible portion ---
 max_index = len(df_trimmed)
@@ -339,6 +341,12 @@ scroll_position = st.slider("Scroll to explore jump", step_size, max_index, 60, 
 visible_df = df_trimmed.iloc[:scroll_position]
 
 # --- Plot with annotations and impulse ---
+# --- Get fixed x-axis range from full trimmed data ---
+x_min = df_trimmed["Time"].min()
+x_max = df_trimmed["Time"].max()
+y_min = df_trimmed["Total_vert_normalized_GRF"].min()
+y_max = df_trimmed["Total_vert_normalized_GRF"].max()
+
 fig1 = go.Figure()
 
 # GRF curve
@@ -397,6 +405,8 @@ fig1.update_layout(
     title="Total GRF Normalized on BW with Impulse Area",
     xaxis_title="Time [s]",
     yaxis_title="Total GRF [N/BW]",
+    xaxis_range=[x_min, x_max],  # <--- FIXED X-AXIS RANGE
+    yaxis_range=[y_min, y_max],  # <--- FIXED Y-AXIS RANGE
     template="plotly_white"
 )
 
